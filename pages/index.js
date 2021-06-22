@@ -29,7 +29,7 @@ export default function Home({ albums, artists, genres, songs }) {
             name="artist"
           />
           <FilterInput
-            options={album} // albums from assets directory
+            options={albums} // albums from assets directory
             value={albumFilter} // albumFilter from useState()
             filterSetter={setAlbumFilter} // setAlbumFilter from useState()
             name="album"
