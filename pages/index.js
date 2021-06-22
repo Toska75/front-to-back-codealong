@@ -1,27 +1,96 @@
+import { useState } from 'react';
+import { albumList, artistList, genreList } from '../assets/additionalAssets';
+import { songList } from '../assets/songList';
+import { AudioPlayer } from '../components/AudioPlayer';
+import { FilterInput } from '../components/FilterInput';
+
 export default function Home() {
-  // -------------------------------------
-  // ---------- STARTING SECTION ---------
-  // -------------------------------------
-  //
-  // --------------- Step 1 --------------
-  //
-  // In this exercise you are going to build a full-stack music App.
-  //
-  // First we are going to work on the front-end of the app creating a user interface:
-  //
-  //   1. Explore the prepared code for the app inside of directories assets and components
-  //   2. Add a header around the h1 Element and add an img with source "/play.svg"
-  //   3. Using the AudioPlayer component allow the user to reproduce a song.
-  //   4. Using the songList array allow the user to choose which song reproduce.
-  //   5. Using the FilterInput component and assets data allow the user to filter by genre, artist or album.
-  //
-  // Once The user interface is ready you need to setup your postgres database.
-  // TODO: ADD UpLeveled leaning LINK OR INSTRUCTIONS TO WHERE TO CONTINUE
-  // - after that please go to the next step in the first file in migrations directory
+  const [activeSong, setActiveSong] = useState(songList[0]);
+  const [genreFilter, setGenreFilter] = useState('');
+  const [artistFilter, setArtistFilter] = useState('');
+  const [albumFilter, setAlbumFilter] = useState('');
 
   return (
     <div>
-      <h1>SOUNDIFY</h1>
+      <header>
+        <img src="/play.svg" alt="play" />
+        <h1>Tobi's SOUNDIFY</h1>
+      </header>
+        <AudioPlayer activeSong={activeSong} />
+        <section className="filter-section">
+          <FilterInput
+            options={genreList} // genreList from assets directory
+            value={genreFilter} // genreFilter from useState()
+            filterSetter={setGenreFilter} // setGenreFilter from useState()
+            name="genre"
+          />
+          <FilterInput
+            options={artistList} // artistList from assets directory
+            value={artistFilter} // artistFilter from useState()
+            filterSetter={setArtistFilter} // setArtistFilter from useState()
+            name="artist"
+          />
+          <FilterInput
+            options={albumList} // albumList from assets directory
+            value={albumFilter} // albumFilter from useState()
+            filterSetter={setAlbumFilter} // setAlbumFilter from useState()
+            name="album"
+          />
+        </section>
+        <div className="song-list">
+          <div className="song-header">
+            <div>name</div>
+            <div>album </div>
+            <div>Year </div>
+            <div>Artist </div>
+            <div>play</div>
+           <div>genre</div>
+          </div>
+        {songList
+
+          .filter((song) => {
+              let isVisible = true;
+              if (genreFilter && genreFilter !== song.genre) {
+                isVisible = false;
+              }
+
+              if (artistFilter && artistFilter !== song.artist) {
+                isVisible = false;
+              }
+
+              if (albumFilter && albumFilter !== song.album) {
+                isVisible = false;
+              }
+
+          return isVisible;
+        })
+
+        .map((song) => {
+          return (
+            <div
+              key={song.id}
+              className="song-container"
+              onDoubleClick={() => {
+                setActiveSong(song);
+              }}
+            >
+              <div className="song-title">{song.name}</div>
+              <div>{song.album}</div>
+              <div>{song.release}</div>
+              <div>{song.artist}</div>
+              <button
+                className="song-play"
+                onClick={() => {
+                  setActiveSong(song);
+                }}
+              >
+                <img src="/play.svg" alt="play" />
+              </button>
+              <div>{song.genre}</div>
+            </div>
+          );
+        })}
+      </div>
     </div>
   );
 }
